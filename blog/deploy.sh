@@ -1,6 +1,9 @@
 #!/bin/bash
-# Write a post, run ./deploy.sh, it's live. Nothing to do on the server.
+# Write a post, run ./deploy.sh, it's live. GitHub Pages serves ../docs.
 set -e
-SERVER="${BLOG_SERVER:-blog-box}"          # tailscale hostname; override: BLOG_SERVER=user@host ./deploy.sh
+cd "$(dirname "$0")"
 python3 build.py
-rsync -avz --delete docs/ "$SERVER:/var/www/blog/"
+cd ..
+git add -A
+git commit -m "${1:-Publish}" || echo "nothing new to commit"
+git push

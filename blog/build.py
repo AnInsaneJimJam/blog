@@ -12,7 +12,8 @@ import markdown
 ROOT = Path(__file__).parent
 AUTHOR = "JimJam"
 SITE_TITLE = "JimJam's blogs"
-SITE_URL = "http://localhost:8000"   # set to the real URL once the server is up
+SITE_URL = "https://anandbansal.me"
+DOMAIN = "anandbansal.me"   # GitHub Pages reads this from docs/CNAME
 FOLDER_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(.+)$")
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
@@ -85,15 +86,18 @@ def write_feed(docs, entries):
         "</channel></rss>")
 
 
-def build(root=ROOT):
-    posts_dir, docs = root / "posts", root / "docs"
+def build(root=ROOT, out=None):
+    posts_dir = root / "posts"
+    docs = out or root.parent / "docs"      # <repo>/docs is what Pages serves
     icons = load_icons(root)
     template = expand_icons((root / "template.html").read_text(), icons)
     md = markdown.Markdown(extensions=["fenced_code", "tables", "smarty"])
 
     if docs.exists():
+        if not (docs / "index.html").exists() and any(docs.iterdir()):
+            raise SystemExit(f"refusing to wipe {docs}: does not look like build output")
         shutil.rmtree(docs)          # rebuild clean so deleted posts really vanish
-    docs.mkdir()
+    docs.mkdir(parents=True)
     shutil.copy(root / "style.css", docs / "style.css")
 
     entries = []
@@ -129,6 +133,8 @@ def build(root=ROOT):
     (docs / "index.html").write_text(
         render(template, SITE_TITLE, "", f'<ul class="posts">\n{links}\n</ul>'))
     write_feed(docs, entries)
+    (docs / "CNAME").write_text(DOMAIN + "\n")     # custom domain for GitHub Pages
+    (docs / ".nojekyll").write_text("")             # serve the files as-is, no Jekyll
     return [(d, s, t) for d, s, t, _ in entries]
 
 
@@ -146,7 +152,7 @@ def selftest():
             (root / "posts" / name / "index.md").write_text(body)
         (root / "posts" / "2026-03-04-newer" / "plot.png").write_bytes(b"PNG")
 
-        posts = build(root)
+        posts = build(root, out=root / 'docs')
         assert posts == [("2026-03-04", "newer", "Newer"),
                          ("2026-01-02", "older", "Older")], posts
         assert (root / "docs/newer/plot.png").read_bytes() == b"PNG"   # images copied
