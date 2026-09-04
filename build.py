@@ -88,7 +88,7 @@ def write_feed(docs, entries):
 
 def build(root=ROOT, out=None):
     posts_dir = root / "posts"
-    docs = out or root.parent / "docs"      # <repo>/docs is what Pages serves
+    docs = out or root / "docs"             # <repo>/docs is what Pages serves
     icons = load_icons(root)
     template = expand_icons((root / "template.html").read_text(), icons)
     md = markdown.Markdown(extensions=["fenced_code", "tables", "smarty"])
