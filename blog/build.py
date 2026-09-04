@@ -12,8 +12,8 @@ import markdown
 ROOT = Path(__file__).parent
 AUTHOR = "JimJam"
 SITE_TITLE = "JimJam's blogs"
-SITE_URL = "https://anandbansal.me"
-DOMAIN = "anandbansal.me"   # GitHub Pages reads this from docs/CNAME
+SITE_URL = "https://blog.anandbansal.me"
+DOMAIN = "blog.anandbansal.me"   # GitHub Pages reads this from docs/CNAME
 FOLDER_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(.+)$")
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
