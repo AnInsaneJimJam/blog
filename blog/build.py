@@ -13,7 +13,6 @@ ROOT = Path(__file__).parent
 AUTHOR = "JimJam"
 SITE_TITLE = "JimJam's blogs"
 SITE_URL = "https://blog.anandbansal.me"
-DOMAIN = "blog.anandbansal.me"   # GitHub Pages reads this from docs/CNAME
 FOLDER_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})-(.+)$")
 MONTHS = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
 
@@ -133,8 +132,6 @@ def build(root=ROOT, out=None):
     (docs / "index.html").write_text(
         render(template, SITE_TITLE, "", f'<ul class="posts">\n{links}\n</ul>'))
     write_feed(docs, entries)
-    (docs / "CNAME").write_text(DOMAIN + "\n")     # custom domain for GitHub Pages
-    (docs / ".nojekyll").write_text("")             # serve the files as-is, no Jekyll
     return [(d, s, t) for d, s, t, _ in entries]
 
 
